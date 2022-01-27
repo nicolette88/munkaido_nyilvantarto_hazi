@@ -36,6 +36,9 @@ const LoginPage = props => {
   };
 
   const register = async () => {
+    if (password !== passwordConfirm) {
+      return window.alert('Hiba: Megadott jelszó nem egyezik!');
+    }
     await signUp(email, password);
     const initialUserData = {
       name: userName,
