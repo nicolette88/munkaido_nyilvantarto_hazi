@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Switch, TouchableOpacity, Image } from 'react-native';
 
-import { loginStatus, signOutUser } from '../auth';
+import { loginStatus } from '../auth';
 import { getUserDataByEmail, saveHistoryOnFirebase } from '../database';
-import { storeUserData, removeUserData } from '../localStorage';
+import { storeUserData } from '../localStorage';
 
 export default function StatusPage(props) {
   // const [currentStatus, setCurrentStatus] = useState(false);
@@ -26,12 +26,6 @@ export default function StatusPage(props) {
     } catch (error) {
       console.error(error);
     }
-  };
-
-  const handleLogout = async () => {
-    await signOutUser();
-    await removeUserData();
-    props.setUserData(null);
   };
 
   useEffect(() => {
