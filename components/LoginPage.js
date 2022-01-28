@@ -9,10 +9,12 @@ import {
   Button,
   TouchableOpacity,
   TouchableWithoutFeedback,
+  // Azért az alert címéket használtam, hogy a megjelenítés azonos legyen a házi feladatba tett képekkel.
+  Alert,
 } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
-import { signIn, signUp } from '../auth';
+import { signIn, signUp, resetPassword } from '../auth';
 import { createUserOnFirebase, getUserDataByEmail } from '../database';
 import { storeUserData } from '../localStorage';
 
@@ -33,6 +35,20 @@ const LoginPage = props => {
     // store the user in localStorage:
     storeUserData(userDataFromFirebase);
     props.setUserData(userDataFromFirebase);
+  };
+
+  const pwdReminder = async text => {
+    if (text !== '') {
+      const reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
+      if (reg.test(text) === false) {
+        Alert.alert(null, 'Email cím nem megfelelő formátumú!');
+        return false;
+      } else {
+        await resetPassword(text);
+      }
+    } else {
+      Alert.alert(null, 'Töltsd ki az email címedet majd nyomd meg újra ezt a gombot');
+    }
   };
 
   const register = async () => {
@@ -100,6 +116,17 @@ const LoginPage = props => {
                 placeholder="jelszó mégegyszer"
                 onChangeText={setPasswordConfirm}
               />
+            )}
+            {!isSignUpActive && (
+              <TouchableOpacity
+                style={[styles.passReminder, isSignUpActive && styles.active]}
+                onPress={() => {
+                  pwdReminder(email);
+                }}>
+                <Text style={[styles.passReminderText, isSignUpActive && styles.activeText]}>
+                  Elfelejtett jelszó
+                </Text>
+              </TouchableOpacity>
             )}
             {isSignUpActive ? (
               <Button title="Regisztráció" onPress={register} />
@@ -170,6 +197,17 @@ const styles = StyleSheet.create({
   },
   activeText: {
     color: '#ffffff',
+  },
+  passReminder: {
+    textAlign: 'right',
+    marginLeft: 'auto',
+    marginBottom: 10,
+    marginRight: 25,
+  },
+  passReminderText: {
+    fontSize: 9,
+    fontStyle: 'italic',
+    color: 'black',
   },
 });
 export default LoginPage;
