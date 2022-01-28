@@ -48,8 +48,10 @@ export default function StatusPage(props) {
   return (
     <View style={styles.container}>
       <View style={styles.logoutSection}>
-        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-          <Text style={styles.logoutButtonText}>Kijelentkezés</Text>
+        <TouchableOpacity
+          style={styles.logoutButton}
+          onPress={() => props.navigation.navigate('Beállítások')}>
+          <Text style={styles.logoutButtonText}>Beállítások</Text>
         </TouchableOpacity>
       </View>
       <Text style={styles.appTitle}>Szia {props.userData.name}!</Text>
