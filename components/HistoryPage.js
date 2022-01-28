@@ -1,10 +1,32 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Text, FlatList } from 'react-native';
+import { StyleSheet, View, Text, FlatList, TouchableOpacity, Alert } from 'react-native';
+import { SvgXml } from 'react-native-svg';
 
-import { getHistory } from '../database';
+import trashSimpson from '../assets/Trash_simpson.js';
+import { getHistory, deleteHistoryById } from '../database';
 
 export default function HistoryPage(props) {
   const [history, setHistory] = useState([]);
+
+  const deleteHistoryItem = () => {
+    Alert.alert(
+      'Biztos tötöljem?',
+      'Biztos törlöd a bejegyzést?',
+      [
+        { text: 'Mégse', onPress: () => console.log('Mégse'), style: 'cancel' },
+        {
+          text: 'Törlés',
+          onPress: () => {
+            const fisrtItemId = history[0].id;
+            deleteHistoryById(props.userData.email, fisrtItemId);
+            setHistory(history.slice(1));
+            props.toggleUserState();
+          },
+        },
+      ],
+      { cancelable: true }
+    );
+  };
 
   const renderItem = ({ item, index }) => (
     <View
@@ -23,6 +45,13 @@ export default function HistoryPage(props) {
           {item.state === 'in' ? 'bejött' : 'távozott'}
         </Text>
       </View>
+      {index === 0 ? (
+        <TouchableOpacity onPress={() => deleteHistoryItem()} style={styles.trashButton}>
+          <SvgXml xml={trashSimpson} width={50} height={50} style={styles.removeTrashIcon} />
+        </TouchableOpacity>
+      ) : (
+        <Text />
+      )}
     </View>
   );
 
@@ -72,5 +101,10 @@ const styles = StyleSheet.create({
     shadowOffset: { width: -2, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 3,
+  },
+  removeTrashIcon: {},
+  trashButton: {
+    position: 'absolute',
+    right: 20,
   },
 });
